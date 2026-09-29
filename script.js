@@ -1,0 +1,20 @@
+const data=[
+['Vector Databases for RAG: An Introduction','IBM','Sep 2026','4MEE8VL7FT58','Generative AI','https://www.coursera.org/account/accomplishments/records/4MEE8VL7FT58'],
+['Google AI','Google','May 2026','617ZG3PRTBMO','Artificial Intelligence','https://www.coursera.org/account/accomplishments/specialization/617ZG3PRTBMO'],
+['AI for Content Creation','Google','May 2026','KW4LR0YOZPGJ','Artificial Intelligence','https://www.coursera.org/account/accomplishments/records/KW4LR0YOZPGJ'],
+['AI for Data Analysis','Google','May 2026','YHAQAN15I52I','Data & Analytics','https://www.coursera.org/account/accomplishments/records/YHAQAN15I52I'],
+['AI for Writing and Communicating','Google','May 2026','FCZHO1HQ0BAO','Artificial Intelligence','https://www.coursera.org/account/accomplishments/records/FCZHO1HQ0BAO'],
+['AI for Research and Insights','Google','May 2026','QEEICZHYZRJR','Artificial Intelligence','https://www.coursera.org/account/accomplishments/records/QEEICZHYZRJR'],
+['AI for Brainstorming and Planning','Google','May 2026','9WVGK3BQF05D','Artificial Intelligence','https://www.coursera.org/account/accomplishments/records/9WVGK3BQF05D'],
+['AI Fundamentals','Google','Apr 2026','STHUIQFRJGLC','Artificial Intelligence','https://www.coursera.org/account/accomplishments/records/STHUIQFRJGLC'],
+['Build RAG Applications: Get Started','IBM','Mar 2026','8TFSFGLTF5U4','Generative AI','https://www.coursera.org/account/accomplishments/records/8TFSFGLTF5U4'],
+['Develop Generative AI Applications: Get Started','IBM','Jan 2026','UMK9IPTQUZYM','Generative AI','https://www.coursera.org/account/accomplishments/records/UMK9IPTQUZYM'],
+['Windows Server Management and Security','Coursera','Oct 2018','Y4KCX6JLGDQS','Enterprise & Systems','https://www.coursera.org/account/accomplishments/verify/Y4KCX6JLGDQS'],
+['Getting and Cleaning Data','Coursera','Aug 2018','6UG9TY7D89W2','Data & Analytics','https://www.coursera.org/account/accomplishments/verify/6UG9TY7D89W2'],
+['Introduction to Cyber Attacks','Coursera','—','ZKNJ6QJZ4HUH','Security','https://www.coursera.org/account/accomplishments/verify/ZKNJ6QJZ4HUH'],
+['Data Science for Business - Level 1','IBM','—','6bb1917a-6d6a-4561-8381-bf92e8697b69','Data & Analytics','https://www.youracclaim.com/badges/6bb1917a-6d6a-4561-8381-bf92e8697b69/linked_in_profile'],
+['The Data Scientist’s Toolbox','Coursera','—','QD39W59RVSFN','Data & Analytics','https://www.coursera.org/account/accomplishments/verify/QD39W59RVSFN'],
+['Data Science Foundations','IBM','—','33216b66-25f1-4b2d-9cc2-8fdcd166115b','Data & Analytics','https://www.youracclaim.com/badges/33216b66-25f1-4b2d-9cc2-8fdcd166115b/linked_in_profile'],
+['Big Data Foundations','IBM','—','25be3dc7-8547-4841-8382-5e4b17a212c4','Big Data','https://www.youracclaim.com/badges/25be3dc7-8547-4841-8382-5e4b17a212c4/linked_in_profile'],
+['R Programming','Big Data University','—','','Data & Analytics',''],['Machine Learning','Big Data University','—','','Machine Learning',''],['Data Science Methodology','Big Data University','—','','Data & Analytics',''],['Data Science','Big Data University','—','','Data & Analytics',''],['Big Data','Big Data University','—','','Big Data','']];
+const grid=document.getElementById('cert-grid'),filters=document.getElementById('filters');let active='All';const cats=['All',...new Set(data.map(x=>x[4]))];filters.innerHTML=cats.map(c=>`<button class="${c==='All'?'active':''}" data-c="${c}">${c}</button>`).join('');function render(){let d=active==='All'?data:data.filter(x=>x[4]===active);grid.innerHTML=d.map(x=>`<article class="card cert"><small>${x[4]}</small><h3>${x[0]}</h3><div class="issuer">${x[1]}</div><div class="date">${x[2]}</div>${x[3]?`<div class="id">Credential ID · ${x[3]}</div>`:''}${x[5]?`<a href="${x[5]}" target="_blank" rel="noopener">View credential ↗</a>`:''}</article>`).join('')}filters.querySelectorAll('button').forEach(b=>b.onclick=()=>{filters.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');active=b.dataset.c;render()});render();
