@@ -20,6 +20,7 @@
     <nav>
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
       <a href="#education">Education</a>
       <a href="#skills">Skills</a>
       <a href="#certifications">Certifications</a>
@@ -147,7 +148,29 @@ status:
 </div>
 </section>
 
-<!-- HIDDEN FOR NOW: "Live" and "Projects" sections.
+<section id="projects" class="section">
+<div class="container">
+  <p class="eyebrow">PROJECTS</p>
+  <h2>Things I've built</h2>
+  <p class="section-intro">One public product and one internal tool. Employer and customer details are not shown.</p>
+  <div class="cards">
+    <article class="card"><span>Windows desktop app</span><h3>Reelsmith</h3><p>A video editor for turning long recordings into finished videos. It removes unwanted frames, shuffles and cuts, adds captions, music and script voiceovers, and handles videos over 30 minutes by working in sections so the disk never fills up. Includes light/dark themes, right-to-left layout and an offline signed-licence system with a free trial.</p><div class="tags"><b>C#</b><b>WPF</b><b>FFmpeg</b><b>Installer</b><b>Licensing</b></div><a href="https://github.com/saifullah185032-ai/reelsmith" class="repo-pending" data-repo="reelsmith" target="_blank" rel="noopener">Download and docs on GitHub →</a></article>
+    <article class="card"><span>Internal tool <b class="badge">Proprietary</b></span><h3>Terminal Archiver</h3><p>A background Windows service that collects diagnostics from self-service terminals on a schedule (files, event logs, registry keys, command output, folder inventories) into verified, password-protected archives. It reports its own health, detects hung runs, recovers after crashes or power loss, and keeps running through a missing or bad configuration. Built on .NET 10 with a silent installer for fleet rollout.</p><div class="tags"><b>C#</b><b>.NET 10</b><b>Windows Service</b><b>Resilience</b><b>Deployment</b></div><p class="note">Built for internal operational use, so code and installer are not public. Details on request.</p></article>
+  </div>
+  <script>
+  // Show the GitHub link only if the repo exists. Only a 404 counts as missing (a 403 rate limit does not).
+  document.querySelectorAll('.repo-pending').forEach(function(link){
+    fetch('https://api.github.com/repos/saifullah185032-ai/' + link.getAttribute('data-repo'))
+      .then(function(r){ if(r.status === 404){ throw new Error('missing'); } })
+      .catch(function(e){
+        if(e.message === 'missing'){ link.removeAttribute('href'); link.textContent = 'Repository coming soon'; link.classList.add('disabled-link'); }
+      });
+  });
+  </script>
+</div>
+</section>
+
+<!-- HIDDEN FOR NOW: "Live" section.
      To re-enable, move the block back in and re-add the nav links.
      NOTE: in the repo-check script, treat ONLY a 404 as "missing" (a 403 rate-limit currently makes real repos look missing).
 <section id="live" class="section alt">
@@ -182,34 +205,6 @@ status:
   setInterval(updateClock, 30000);
 })();
 </script>
-
-<section id="projects" class="section">
-<div class="container">
-  <p class="eyebrow">PROJECTS</p>
-  <h2>Building the portfolio</h2>
-  <p class="section-intro">These projects are designed as public, sanitized demonstrations of practical skills. No proprietary customer or employer information is included.</p>
-  <div class="cards">
-    <article class="card"><span>01</span><h3>RAG Knowledge Assistant</h3><p>Document question-answering assistant using retrieval-augmented generation.</p><div class="tags"><b>Python</b><b>RAG</b><b>LLM</b></div><a href="https://github.com/saifullah185032-ai/rag-knowledge-assistant" class="repo-pending" data-repo="rag-knowledge-assistant">GitHub →</a></article>
-    <article class="card"><span>02</span><h3>Enterprise Log Analyzer</h3><p>Structured log analysis and diagnostics inspired by enterprise production troubleshooting.</p><div class="tags"><b>C#</b><b>.NET</b><b>SQL</b></div><a href="https://github.com/saifullah185032-ai/enterprise-log-analyzer" class="repo-pending" data-repo="enterprise-log-analyzer">GitHub →</a></article>
-    <article class="card"><span>03</span><h3>Incident Analyzer</h3><p>AI-assisted analysis of application events, errors and incident patterns.</p><div class="tags"><b>Python</b><b>AI</b><b>Analytics</b></div><a href="https://github.com/saifullah185032-ai/incident-analyzer" class="repo-pending" data-repo="incident-analyzer">GitHub →</a></article>
-    <article class="card"><span>04</span><h3>Big Data Pipeline</h3><p>Demonstration data pipeline for ingestion, transformation and analytics.</p><div class="tags"><b>PySpark</b><b>Hive</b><b>SQL</b></div><a href="https://github.com/saifullah185032-ai/big-data-pipeline" class="repo-pending" data-repo="big-data-pipeline">GitHub →</a></article>
-  </div>
-  <script>
-  // Hide/relabel project links that point to repos which don't exist yet on GitHub,
-  // so visitors never land on a 404. Once you create each repo, this auto-detects it.
-  document.querySelectorAll('.repo-pending').forEach(function(link){
-    var repo = link.getAttribute('data-repo');
-    fetch('https://api.github.com/repos/saifullah185032-ai/' + repo)
-      .then(function(r){ if(!r.ok){ throw new Error('missing'); } })
-      .catch(function(){
-        link.removeAttribute('href');
-        link.textContent = 'Repo coming soon';
-        link.classList.add('disabled-link');
-      });
-  });
-  </script>
-</div>
-</section>
 
 -->
 

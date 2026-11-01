@@ -27,3 +27,8 @@
 .cert-item h3{font-family:"Space Grotesk";font-size:1rem;margin:0 0 6px}
 .cert-item p{color:var(--muted);font-size:.85rem;margin:0}
 @media (max-width:768px){.cert-grid{grid-template-columns:1fr}}
+
+.card>span{display:block}
+.card .badge{display:inline-block;margin-left:8px;font-size:.7rem;color:var(--accent2);border:1px solid var(--accent2);padding:2px 8px;border-radius:99px;vertical-align:middle}
+.card .note{margin:14px 0 0;font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.card .tags{margin-top:14px}
