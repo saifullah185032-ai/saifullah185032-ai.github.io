@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="RAGForge — a local-first Retrieval-Augmented Generation system in C# / .NET 9 with hybrid search, citations and an evaluation harness. Project case study by Saif Ullah.">
+<title>RAGForge | Project case study | Saif Ullah</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+<meta property="og:title" content="RAGForge | Project case study | Saif Ullah">
+<meta property="og:description" content="A local-first RAG system in C# / .NET 9: hybrid search, grounded answers with citations, and measurable quality.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://saifullah185032-ai.github.io/ragforge.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="style.css">
+<style>
+  .back{color:var(--muted);text-decoration:none;font-size:.9rem}
+  .back:hover{color:var(--text)}
+  .case-intro{max-width:760px}
+  .flow{margin:0;padding:26px;overflow:auto;color:#c9d7df;font-size:.84rem;line-height:1.55}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .box h3{font-family:"Space Grotesk";margin:0;padding:14px 22px;border-bottom:1px solid var(--line);font-size:1rem;color:var(--accent)}
+  .two-box{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .endpoint{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:.95rem}
+  .endpoint code{color:var(--accent);min-width:290px;font-size:.85rem}
+  .note-box{border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:10px;padding:18px 22px;color:var(--muted);background:var(--panel)}
+  .note-box strong{color:var(--text)}
+  @media(max-width:800px){.two-box{grid-template-columns:1fr}.endpoint{flex-direction:column;gap:2px}.endpoint code{min-width:0}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html#home"><span class="brand-badge">SU</span><span class="brand-text">Saif Ullah<span class="brand-sub">Enterprise Systems · AI & Data</span></span></a>
+    <nav>
+      <a href="index.html#about">About</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#skills">Skills</a>
+      <a href="index.html#learning">Learning</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">PROJECT CASE STUDY · OPEN SOURCE</p>
+      <h1>RAG<span>Forge</span></h1>
+      <p class="lead">A Retrieval-Augmented Generation system that answers questions about your own documents, with citations, and runs entirely on your own machine. Built in C# / .NET 9, one component at a time, so every part is understood, tested and replaceable.</p>
+      <div class="actions">
+        <a class="button primary repo-pending" href="https://github.com/saifullah185032-ai/RAGForge" data-repo="RAGForge" target="_blank" rel="noopener">View code on GitHub ↗</a>
+        <a class="button secondary" href="index.html#projects">← Back to projects</a>
+      </div>
+      <div class="tags">
+        <b>C#</b><b>.NET 9</b><b>ASP.NET Core</b><b>RAG</b><b>Ollama</b><b>Qdrant</b><b>BM25</b><b>Docker</b><b>xUnit</b>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="terminal-top"><i></i><i></i><i></i></div>
+      <pre><code># example, using the bundled sample documents
+POST /api/ask
+{ "question": "What does error E4721 mean?" }
+
+grounded : true
+answer   : a card is stuck inside the reader
+           transport [1]
+sources  :
+  [1] Card Reader Troubleshooting
+      > Card jam (error E4721)   cited</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+<div class="container">
+  <p class="eyebrow">OVERVIEW</p>
+  <h2>Answers you can check.</h2>
+  <div class="two-col">
+    <p><strong>The problem.</strong> Language models do not know your private documents, and when they do not know something they often answer anyway. For technical support and enterprise work, a confident wrong answer is worse than no answer. Pasting whole manuals into a prompt does not scale either.</p>
+    <p><strong>The approach.</strong> RAGForge finds the few passages that matter, gives only those to a local language model, and requires it to answer from them and cite them. If nothing relevant is found, the model is not called at all. Every answer comes with its sources, so a person can verify it.</p>
+  </div>
+</div>
+</section>
+
+<section class="section alt">
+<div class="container">
+  <p class="eyebrow">CAPABILITIES</p>
+  <h2>What it does</h2>
+  <div class="cards">
+    <article class="card"><span>01</span><h3>Ingestion</h3><p>Loads .txt and Markdown files and splits them into overlapping chunks that respect word boundaries. For Markdown, every chunk records the heading it belongs to, which later becomes the citation (for example "Guide &gt; Cleaning schedule").</p></article>
+    <article class="card"><span>02</span><h3>Local embeddings</h3><p>Turns text into vectors with a local Ollama model, in batches, with clear errors when the server or model is missing. Cosine similarity is implemented from first principles and covered by tests.</p></article>
+    <article class="card"><span>03</span><h3>Swappable vector store</h3><p>An in-memory store for zero-setup use, and a Qdrant adapter over its REST API for persistence. Chosen by one configuration setting. Re-uploading a file replaces the old version instead of duplicating it.</p></article>
+    <article class="card"><span>04</span><h3>Hybrid retrieval</h3><p>Semantic search finds meaning; BM25 keyword search finds exact tokens such as error codes. The two rankings are merged with Reciprocal Rank Fusion, which uses ranks only, so their score scales never need to match. Optional LLM reranking improves precision.</p></article>
+    <article class="card"><span>05</span><h3>Grounded answers with citations</h3><p>A strict prompt tells the model to use only the numbered passages and to say it does not know otherwise. The response lists every passage shown to the model and marks which ones the answer actually cited.</p></article>
+    <article class="card"><span>06</span><h3>Measured quality</h3><p>A built-in evaluation endpoint reports HitRate@K and Mean Reciprocal Rank for a set of test questions, so each change (chunk size, hybrid mode, reranking, model) is judged by numbers.</p></article>
+  </div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+  <p class="eyebrow">HOW IT WORKS</p>
+  <h2>Two pipelines.</h2>
+  <p class="section-intro">Everything in the system is one of these steps, or a measurement of how well they work.</p>
+  <div class="two-box" style="margin-top:28px">
+    <div class="box"><h3>Indexing: when a document is added</h3>
+<pre class="flow">file (.txt / .md)
+  ↓ loader
+text
+  ↓ chunker (size + overlap, headings)
+chunks ─────────────→ keyword index (BM25)
+  ↓ embedding model (Ollama)
+vectors
+  ↓
+vector store (in-memory or Qdrant)</pre></div>
+    <div class="box"><h3>Querying: when a question is asked</h3>
+<pre class="flow">question
+  ├─ embed → vector search ─┐
+  └─ keyword search (BM25) ─┤
+                            ↓
+              fuse rankings (RRF)
+                            ↓
+       optional LLM rerank of candidates
+                            ↓
+ prompt = rules + numbered passages + question
+                            ↓
+           local chat model (Ollama)
+                            ↓
+          answer + citations [1] [2]</pre></div>
+  </div>
+</div>
+</section>
+
+<section class="section alt">
+<div class="container">
+  <p class="eyebrow">ARCHITECTURE</p>
+  <h2>Four layers, one rule.</h2>
+  <div class="two-col">
+    <div>
+      <p>The code is split into <strong>Domain</strong> (plain models and math, no packages), <strong>Application</strong> (the use cases and the interfaces they need), <strong>Infrastructure</strong> (Ollama, Qdrant, BM25, loaders) and <strong>Api</strong> (HTTP).</p>
+      <p>The dependency rule: arrows point inward. Application never mentions Ollama, Qdrant or HTTP. Every external capability sits behind an interface, so a technology is replaced by adding one class and changing configuration.</p>
+    </div>
+    <div class="box"><h3>Dependency direction</h3>
+<pre class="flow">Api ──────────→ Application ──→ Domain
+ │                   ↑
+ └─→ Infrastructure ─┘
+     (implements the interfaces)</pre></div>
+  </div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+  <p class="eyebrow">DECISIONS</p>
+  <h2>Engineering choices, and why.</h2>
+  <div class="timeline timeline-compact">
+    <article><div class="date">RETRIEVAL</div><h3>Reciprocal Rank Fusion instead of blending scores</h3><p class="company">Cosine similarity and BM25 live on incompatible scales</p><ul><li>Fusing by rank needs no tuning per document set and stays deterministic.</li></ul></article>
+    <article><div class="date">SAFETY</div><h3>Never call the model when nothing relevant is found</h3><p class="company">A model that is not asked cannot hallucinate</p><ul><li>The answer is an explicit "nothing found" result, and the prompt gives the model an exact "I don't know" sentence when the passages are insufficient.</li></ul></article>
+    <article><div class="date">DATA</div><h3>Document identity comes from the file name</h3><p class="company">Re-uploading replaces; it never duplicates</p><ul><li>Embedding happens before the old version is deleted, so a failed embedding never destroys existing data.</li></ul></article>
+    <article><div class="date">RESILIENCE</div><h3>One error type per dependency, one place that maps them to HTTP 503</h3><p class="company">Messages say what to do: "Is it running?", "ollama pull gemma3:4b"</p><ul><li>A failing reranker falls back to the original order instead of breaking search.</li></ul></article>
+    <article><div class="date">OPERATIONS</div><h3>Keyword index rebuilt from the vector store at startup</h3><p class="company">Hybrid search works immediately after a restart</p><ul><li>Verified against a real Qdrant server, including paged scrolling of stored chunks.</li></ul></article>
+  </div>
+</div>
+</section>
+
+<section class="section alt">
+<div class="container">
+  <p class="eyebrow">QUALITY</p>
+  <h2>Built to be tested and measured.</h2>
+  <div class="live-grid">
+    <div class="live-stat"><span class="live-value">120+</span><span class="live-label">Automated tests</span></div>
+    <div class="live-stat"><span class="live-value">2</span><span class="live-label">Vector store backends</span></div>
+    <div class="live-stat"><span class="live-value">3</span><span class="live-label">Retrieval strategies</span></div>
+    <div class="live-stat"><span class="live-value">9</span><span class="live-label">REST endpoints</span></div>
+    <div class="live-stat"><span class="live-value">7</span><span class="live-label">Build phases</span></div>
+    <div class="live-stat"><span class="live-value">0</span><span class="live-label">Cloud dependencies</span></div>
+  </div>
+  <p class="section-intro" style="margin-top:28px">Unit tests use small hand-written fakes and stubbed HTTP handlers, so the whole suite runs without Ollama or Qdrant. The Qdrant adapter was additionally exercised against a real Qdrant server. Retrieval quality is measured with the evaluation endpoint rather than judged by eye.</p>
+  <!-- After running your own evaluation, add a short results table here (baseline vs hybrid vs rerank: HitRate@3 and MRR). -->
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+  <p class="eyebrow">API</p>
+  <h2>Endpoints</h2>
+  <div>
+    <div class="endpoint"><code>POST /api/documents/index</code><span>Chunk, embed and store a .txt or .md file (same name replaces the old version)</span></div>
+    <div class="endpoint"><code>POST /api/ask</code><span>Answer a question from the documents, with numbered citations</span></div>
+    <div class="endpoint"><code>POST /api/search</code><span>Semantic or hybrid search returning scored chunks</span></div>
+    <div class="endpoint"><code>POST /api/evaluation/run</code><span>HitRate@K and MRR for your test questions</span></div>
+    <div class="endpoint"><code>POST /api/documents/ingest</code><span>Preview how a file is chunked (nothing stored)</span></div>
+    <div class="endpoint"><code>DELETE /api/documents/{id}</code><span>Remove a document from the index</span></div>
+    <div class="endpoint"><code>POST /api/embeddings/similarity</code><span>Learning endpoint: cosine similarity of two texts</span></div>
+    <div class="endpoint"><code>GET /api/health/dependencies</code><span>Readiness: checks Ollama and the vector store</span></div>
+  </div>
+</div>
+</section>
+
+<section class="section alt">
+<div class="container">
+  <p class="eyebrow">TECH STACK</p>
+  <h2>Built with</h2>
+  <div class="skill-grid">
+    <div><h3>Application</h3><p>C# · .NET 9 · ASP.NET Core · dependency injection · options pattern · async / cancellation</p></div>
+    <div><h3>AI &amp; retrieval</h3><p>Ollama (nomic-embed-text, gemma3) · embeddings · cosine similarity · BM25 · Reciprocal Rank Fusion · LLM reranking</p></div>
+    <div><h3>Storage</h3><p>Qdrant (REST) · in-memory vector store · Docker Compose</p></div>
+    <div><h3>Quality</h3><p>xUnit · fakes and stubbed HTTP handlers · evaluation harness (HitRate@K, MRR)</p></div>
+    <div><h3>Delivery</h3><p>Dockerfile (multi-stage) · GitHub Actions CI · environment-based configuration</p></div>
+    <div><h3>Documentation</h3><p>Architecture decision records · a complete guide explaining every concept and file</p></div>
+  </div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+  <p class="eyebrow">HONEST LIMITS</p>
+  <h2>What it does not do yet.</h2>
+  <div class="note-box">
+    <p><strong>Scale.</strong> The in-memory store and the BM25 index scan every chunk: fine for thousands of chunks, not millions.</p>
+    <p><strong>Formats.</strong> Only .txt and Markdown today. A PDF loader with page-number citations is the next planned step.</p>
+    <p><strong>Security.</strong> No authentication yet, and documents are treated as trusted input. A production deployment needs access control, per-user filtering before retrieval, and defences against prompt injection.</p>
+    <p style="margin-bottom:0"><strong>Evaluation.</strong> It measures retrieval, not answer faithfulness. An LLM-judged faithfulness check is a planned extension.</p>
+  </div>
+</div>
+</section>
+
+<section class="section alt">
+<div class="container">
+  <p class="eyebrow">TRY IT</p>
+  <h2>Run it locally.</h2>
+  <div class="hero-card" style="max-width:760px">
+    <div class="terminal-top"><i></i><i></i><i></i></div>
+    <pre><code>ollama pull nomic-embed-text
+ollama pull gemma3:4b
+
+git clone https://github.com/saifullah185032-ai/RAGForge
+cd RAGForge
+dotnet run --project RAGForge.Api
+
+# open /swagger, index the files in samples/,
+# then POST /api/ask</code></pre>
+  </div>
+  <div class="actions">
+    <a class="button primary repo-pending" href="https://github.com/saifullah185032-ai/RAGForge" data-repo="RAGForge" target="_blank" rel="noopener">View code on GitHub ↗</a>
+    <a class="button secondary" href="index.html#contact">Contact me</a>
+    <a class="button secondary" href="index.html#projects">← All projects</a>
+  </div>
+</div>
+</section>
+</main>
+
+<script>
+// Show the GitHub buttons only if the repo exists. Only a 404 counts as missing (a 403 rate limit does not).
+document.querySelectorAll('.repo-pending').forEach(function(link){
+  fetch('https://api.github.com/repos/saifullah185032-ai/' + link.getAttribute('data-repo'))
+    .then(function(r){ if(r.status === 404){ throw new Error('missing'); } })
+    .catch(function(e){
+      if(e.message === 'missing'){ link.removeAttribute('href'); link.textContent = 'Repository coming soon'; link.classList.add('disabled-link'); }
+    });
+});
+</script>
+
+<footer><div class="container">© 2026 Saif Ullah · Built with GitHub Pages</div></footer>
+</body>
+</html>
